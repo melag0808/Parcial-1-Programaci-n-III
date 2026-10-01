@@ -625,4 +625,13 @@ defmodule Principal do
   end
 end
 
+# Mapa del otro centro de acopio
+centro_vecino = %{
+  1 => 1850.5,
+  2 => 2100,
+  3 => 1640,
+  5 => 2350,
+  7 => 800
+}
+
 Principal.main()
