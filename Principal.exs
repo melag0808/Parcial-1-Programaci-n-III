@@ -36,6 +36,10 @@ defmodule Principal do
       rechazadas
     )
 
+    mostrar_combinacion_centros(
+      validas
+    )
+
     mostrar_comprobante(
       productores,
       validas
@@ -508,7 +512,11 @@ defmodule Principal do
     Util.mostrar(mensaje, :mensaje)
   end
 
-  #Funcion mostrar_combinacion_centros, que muestra la combinacion de centros de acopio y los litros diarios
+  @doc """
+  Muestra la combinación de litros diarios entre el centro de acopio y el centro vecino.
+  Recibe como argumentos el mapa de litros por dia a partir de las entregas válidas y el mapa del centro vecino y el mapa propio.
+  Muestra el resultado ordenado por dia.
+  """
   defp mostrar_combinacion_centros(validas) do
     Util.mostrar(
       "\n========== COMBINACIÓN DE CENTROS ==========\n"
@@ -521,7 +529,7 @@ defmodule Principal do
       |> Reportes.combinar_centros(centro_vecino)
 
     mensaje =
-      |> Enum.sort()
+      |> Enum.sort() # Ordena por dia
       |> Util.convertir_coleccion_mensaje (fn {dia, litros} -> "Día #{dia}: #{litros} litros\n" end)
       |> Enum.join()
 
