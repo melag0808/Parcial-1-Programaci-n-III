@@ -6,6 +6,15 @@
 
 defmodule Principal do
 
+  # Mapa del otro centro de acopio
+  @centro_vecino %{
+  1 => 1850.5,
+  2 => 2100,
+  3 => 1640,
+  5 => 2350,
+  7 => 800
+  }
+
   def main do
     productores = Datos.productores()
     tanques = Datos.tanques()
@@ -526,11 +535,12 @@ defmodule Principal do
     combinacion =
       validas
       |> Reportes.mapa_litros_diarios()
-      |> Reportes.combinar_centros(centro_vecino)
+      |> Reportes.combinar_centros(@centro_vecino)
 
     mensaje =
-      |> Enum.sort() # Ordena por dia
-      |> Util.convertir_coleccion_mensaje (fn {dia, litros} -> "Día #{dia}: #{litros} litros\n" end)
+      combinacion
+      |> Enum.sort()# Ordena por dia
+      |> Util.convertir_coleccion_mensaje(fn {dia, litros} -> "Día #{dia}: #{litros} litros\n" end)
       |> Enum.join()
 
     Util.mostrar(mensaje, :mensaje)
@@ -653,13 +663,6 @@ defmodule Principal do
   end
 end
 
-# Mapa del otro centro de acopio
-centro_vecino = %{
-  1 => 1850.5,
-  2 => 2100,
-  3 => 1640,
-  5 => 2350,
-  7 => 800
-}
+
 
 Principal.main()
