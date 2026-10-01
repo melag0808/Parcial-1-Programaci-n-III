@@ -508,6 +508,7 @@ defmodule Principal do
     Util.mostrar(mensaje, :mensaje)
   end
 
+  #Funcion mostrar_combinacion_centros, que muestra la combinacion de centros de acopio y los litros diarios
   defp mostrar_combinacion_centros(validas) do
     Util.mostrar(
       "\n========== COMBINACIÓN DE CENTROS ==========\n"
