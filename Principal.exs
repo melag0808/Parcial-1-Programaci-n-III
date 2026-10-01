@@ -519,7 +519,7 @@ defmodule Principal do
   """
   defp mostrar_combinacion_centros(validas) do
     Util.mostrar(
-      "\n========== COMBINACIÓN DE CENTROS ==========\n"
+      "\n========== COMBINACIÓN DE CENTROS ==========\n",
       :mensaje
     )
 
