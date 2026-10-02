@@ -6,6 +6,9 @@
 
 defmodule Principal do
 
+  # Atributo de la cantidad de repeticiones para medir el tiempo
+  @repeticiones 1000
+
   # Mapa del otro centro de acopio
   @centro_vecino %{
   1 => 1850.5,
@@ -46,6 +49,13 @@ defmodule Principal do
     )
 
     mostrar_combinacion_centros(
+      validas
+    )
+
+    mostrar_mediciones(
+      productores,
+      tanques,
+      entregas,
       validas
     )
 
@@ -661,6 +671,80 @@ defmodule Principal do
       )
     end
   end
+
+  @doc """
+  Ejecuta una función varias veces y mide cuánto tarda cada ejecución.
+
+  Recibe una función pura y el numero de repeticiones del atributo @repeticiones.
+  Usa :timer.tc/1 para obtener el tiempo en microsegundos.
+
+  Retorna un mapa con el tiempo mínimo, máximo y promedio.
+  """
+  defp medir(funcion, repeticiones) do
+    tiempos =
+      for _ <- 1..repeticiones do
+        {tiempo, _resultado} = :timer.tc(funcion)
+        tiempo
+      end
+
+    %{
+      minimo: Enum.min(tiempos),
+      maximo: Enum.max(tiempos),
+      promedio: Float.round(Enum.sum(tiempos) / repeticiones, 2)
+    }
+end
+
+  @doc """
+  Mide y muestra el tiempo de ejecución de validar_Todas, de
+  Liquidacion.liquidar_todos/2 y de Reportes.r4/2.
+  """
+  defp mostrar_mediciones(productores, tanques, entregas, validas) do
+    Util.mostrar("\n========== MEDICIONES DE TIEMPO ==========\n", :mensaje)
+
+    validacion =
+      medir(
+        fn -> Validacion.validar_todas(entregas, productores, tanques) end,
+        @repeticiones
+      )
+
+    liquidacion =
+      medir(
+        fn -> Liquidacion.liquidar_todos(productores, validas) end,
+        @repeticiones
+      )
+
+    reporte_r4 =
+      medir(
+        fn -> Reportes.r4(productores, validas) end,
+        @repeticiones
+      )
+
+    mensaje =
+      [
+        {"Validacion.validar_todas", validacion},
+        {"Liquidacion.liquidar_todos", liquidacion},
+        {"Reportes.r4", reporte_r4}
+      ]
+      |> Util.convertir_coleccion_mensaje(fn {nombre, m} ->
+        "#{nombre}: mínimo #{m.minimo} µs, máximo #{m.maximo} µs, promedio #{m.promedio} µs\n"
+      end)
+      |> Enum.join()
+
+    comparacion =
+    cond do
+      liquidacion.promedio > reporte_r4.promedio ->
+        "El promedio de Liquidacion.liquidar_todos es MAYOR que el de Reportes.r4\n"
+
+      liquidacion.promedio < reporte_r4.promedio ->
+        "El promedio de Liquidacion.liquidar_todos es MENOR que el de Reportes.r4\n"
+
+      true ->
+        "El promedio de Liquidacion.liquidar_todos es IGUAL al de Reportes.r4\n"
+    end
+
+    Util.mostrar(mensaje <> "\n" <> comparacion, :mensaje)
+  end
+
 end
 
 
